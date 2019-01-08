@@ -36,6 +36,13 @@ $MODDATADIR/9998 TTW321
 $MODDATADIR/9999 TTW32
 ```
 
+These directories are merged directly to game root folder so put your mods into Data subdirectory, e.g.:
+`$MODDATADIR/0005 UIO/Data`
+`$MODDATADIR/9998 TTW321/Data`
+This is to allow overwriting/merging of DLL files, for example:
+`$MODDATADIR/0002 native dlls/d3dx9_38.dll`
+and similar.
+
 You can pick whatever ordering you want, but number prefixing is commonly used in world of UNIX-like systems for config ordering.
 
 The resulting mod load order is such that TTW have lovest priority and libvorbis (dll files) highest, effectively overwriting files with same names from TTW.
