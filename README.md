@@ -3,10 +3,15 @@
 ## Variables
 
 FONVDIR - directory with game (originally created for FONV, hence the name). Nothing will be modified in this directory.
+
 BASEORDER - fixed order of ESM/ESPs at beginning of load order - these will be prepended and order determined by directory scan will be ignored for these. Useful for TTW which contains many files and they have to be interleaved with base game files.
+
 MODDATADIR - directory that contains mod structured as described in "Directory structure". Nothing will be changed in this directory.
+
 MERGERDIR - directory where merged filesystem will be mounted
+
 OVFSWORKDIR - what OverlayFS calls work dir; not important, just point it to writable location
+
 OVFSOVERLAYDIR - what OverlayFS calls overlay dir; not important, just point it to writable location
 
 All changes (including creation and deletion of files) are handled by OverlayFS so even UIO is perfectly safe to use - it will not change anything in MODDATADIR or FONVDIR.
@@ -17,6 +22,7 @@ Scripts expects clean game directory (tested with Fallout NV) in FONVDIR, mods i
 
 MODDATADIR should contain directories that after ascending ASCII alphabetical ordering matches mod load order where first directories have highest priority and latest lowest priority. Example:
 
+```
 $MODDATADIR/0001 libvorbis
 $MODDATADIR/0002 native dlls
 $MODDATADIR/0004 enb
@@ -28,6 +34,7 @@ $MODDATADIR/9800 JIP CCC
 $MODDATADIR/9850 MCM
 $MODDATADIR/9998 TTW321
 $MODDATADIR/9999 TTW32
+```
 
 You can pick whatever ordering you want, but number prefixing is commonly used in world of UNIX-like systems for config ordering.
 
@@ -39,11 +46,15 @@ To ensure proper load order make sure that each directory contains only one
 
 FONVDIR variable is provided by FONVLaunchInMerged so you don't have to hardcode mergedi variable at two places.
 
+```shell
 exec env WINEESYNC=1 WINEDLLOVERRIDES="d3d9=n,b" WINE_LARGE_ADDRESS_AWARE=1 ./FONVLaunchInMerged.sh sh -c 'cd "$FONVDIR"; exec wine FalloutNV.exe'
+```
 
 or
 
+```shell
 exec env WINEESYNC=1 WINEDLLOVERRIDES="d3d9=n,b" WINE_LARGE_ADDRESS_AWARE=1 ./FONVLaunchInMerged.sh sh -c 'cd "$FONVDIR"; exec wine FalloutNVLauncher.exe'
+```
 
 Put this to script for easier launching.
 
