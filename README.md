@@ -46,7 +46,7 @@ You can pick whatever ordering you want, but number prefixing is commonly used i
 
 The resulting mod load order is such that TTW have lovest priority and libvorbis (dll files) highest, effectively overwriting files with same names from TTW.
 
-To ensure proper load order make sure that each directory contains only one 
+To have deterministic load order make sure that each directory contains only one ESP or ESM (unless order is specified explicitly in BASEORDER variable).
 
 ## Start
 
