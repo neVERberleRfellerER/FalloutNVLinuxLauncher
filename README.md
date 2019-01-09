@@ -35,7 +35,7 @@ $MODDATADIR/9998 TTW32
 $MODDATADIR/9999 Fallout New Vegas
 ```
 
-Since these directories are jusr merge over each other, put your mods into Data subdirectory, e.g.:
+Since these directories are just merged over each other, put your mods into Data subdirectory, e.g.:
 `$MODDATADIR/0005 UIO/Data`
 `$MODDATADIR/9998 TTW321/Data`
 This is to allow overwriting/merging of DLL files, for example:
