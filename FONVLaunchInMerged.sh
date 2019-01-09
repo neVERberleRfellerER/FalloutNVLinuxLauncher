@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+# Customize following variables to match your preferred directory structure
+
 ROOTDIR="/home/user/.wine/drive_c/Fallout"
 MODDIR="$ROOTDIR/mods"
 
@@ -8,6 +10,8 @@ MERGERDIR="$ROOTDIR/Fallout New Vegas"
 MODDATADIR="$MODDIR/data"
 OVFSWORKDIR="$MODDIR/_work"
 OVFSOVERLAYDIR="$MODDIR/_overlay"
+
+# Customize this to match preferred order of base game and eventually TTW.
 
 BASEORDER=$(cat <<'EOF'
 FalloutNV.esm
@@ -30,6 +34,8 @@ TaleOfTwoWastelands.esm
 YUPTTW.esm
 EOF
 )
+
+# Everything below should not be touched
 
 if [ "$#" -eq 0 ]; then
 	programname=`basename "$0"`
