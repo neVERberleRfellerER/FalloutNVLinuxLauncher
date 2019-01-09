@@ -2,11 +2,9 @@
 
 ## Variables
 
-FONVDIR - directory with game (originally created for FONV, hence the name). Nothing will be modified in this directory.
-
 BASEORDER - fixed order of ESM/ESPs at beginning of load order - these will be prepended and order determined by directory scan will be ignored for these. Useful for TTW which contains many files and they have to be interleaved with base game files.
 
-MODDATADIR - directory that contains mod structured as described in "Directory structure". Nothing will be changed in this directory.
+MODDATADIR - directory that contains mod structured as described in "Directory structure". Nothing will be changed in this directory. Base game is also treated as mod and should be last in order.
 
 MERGERDIR - directory where merged filesystem will be mounted
 
@@ -32,16 +30,17 @@ $MODDATADIR/0495 Vanilla UI Plus
 $MODDATADIR/9500 BLEED
 $MODDATADIR/9800 JIP CCC
 $MODDATADIR/9850 MCM
-$MODDATADIR/9998 TTW321
-$MODDATADIR/9999 TTW32
+$MODDATADIR/9997 TTW321
+$MODDATADIR/9998 TTW32
+$MODDATADIR/9999 Fallout New Vegas
 ```
 
-These directories are merged directly to game root folder so put your mods into Data subdirectory, e.g.:
+Since these directories are jusr merge over each other, put your mods into Data subdirectory, e.g.:
 `$MODDATADIR/0005 UIO/Data`
 `$MODDATADIR/9998 TTW321/Data`
 This is to allow overwriting/merging of DLL files, for example:
 `$MODDATADIR/0002 native dlls/d3dx9_38.dll`
-and similar.
+and similar. It also makes possible to treat game as mod which simplifies script and makes case-sensitive conflict checking more robust.
 
 You can pick whatever ordering you want, but number prefixing is commonly used in world of UNIX-like systems for config ordering.
 

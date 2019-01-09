@@ -4,7 +4,6 @@ set -e
 ROOTDIR="/home/user/.wine/drive_c/Fallout"
 MODDIR="$ROOTDIR/mods"
 
-FONVDIR="$ROOTDIR/Fallout New Vegas_clean"
 MERGERDIR="$ROOTDIR/Fallout New Vegas"
 MODDATADIR="$MODDIR/data"
 OVFSWORKDIR="$MODDIR/_work"
@@ -45,8 +44,6 @@ LOWERDIRS=`find "$MODDATADIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z 
 echo "Overlay stacking will be (highest to lowest priority):"
 echo "$(echo $LOWERDIRS | tr ':' '\n')"
 
-# find base game ESPs and ESMs, remove duplicates keepeing last occurence
-GAMEORDER=$(find "$FONVDIR/Data" -mindepth 3 -maxdepth 3 -type f \( -name '*.esp' -or -name '*.esm' \) -print0 | sort -z | xargs -r0 -n1 basename | awk '!seen[$0]++' | tac)
 # find mod ESPs and ESMs, remove duplicates keepeing last occurence
 MODORDER=$(find "$MODDATADIR" -mindepth 3 -maxdepth 3 -type f \( -name '*.esp' -or -name '*.esm' \) -print0 | sort -z | xargs -r0 -n1 basename | awk '!seen[$0]++' | tac)
 
@@ -65,7 +62,7 @@ mkdir -p "$OVFSOVERLAYDIR" "$OVFSWORKDIR"
 WAITFORPID=$BASHPID
 sudo -k -- /bin/sh <<EOF
 # mount overlay
-mount -t overlay overlay -o lowerdir="$LOWERDIRS:$FONVDIR",upperdir="$OVFSOVERLAYDIR",workdir="$OVFSWORKDIR",metacopy=on "$MERGERDIR" || {
+mount -t overlay overlay -o lowerdir="$LOWERDIRS",upperdir="$OVFSOVERLAYDIR",workdir="$OVFSWORKDIR",metacopy=on "$MERGERDIR" || {
     echo "Overlay mounting failed"
     exit 1
 }
