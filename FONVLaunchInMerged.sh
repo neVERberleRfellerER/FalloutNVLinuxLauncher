@@ -57,7 +57,7 @@ done | awk '!seen[$0]++' | tac > "$LOADORDERFILE"
 # is its priority
 idx=0
 while IFS= read -r line; do
-    touch -d "Jan 1 2000 + $idx days" "$MERGERDIR/Data/$line"
+    touch -d "2000-01-01 00:00:00Z +$idx days" "$MERGERDIR/Data/$line"
     (( idx++ ))
 done < <(cat "$LOADORDERFILE")
 
