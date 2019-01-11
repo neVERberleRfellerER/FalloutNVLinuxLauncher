@@ -35,7 +35,7 @@ mkdir -p "$OVFSOVERLAYDIR" "$OVFSWORKDIR"
 WAITFORPID=$BASHPID
 sudo -k -- /bin/sh <<EOF
 # mount overlay
-mount -t overlay overlay -o lowerdir="$LOWERDIRS",upperdir="$OVFSOVERLAYDIR",workdir="$OVFSWORKDIR",metacopy=on "$MERGERDIR" || {
+mount -t overlay overlay -o lowerdir='$LOWERDIRS',upperdir='$OVFSOVERLAYDIR',workdir='$OVFSWORKDIR',metacopy=on '$MERGERDIR' || {
     echo "Overlay mounting failed"
     exit 1
 }
