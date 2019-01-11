@@ -55,9 +55,9 @@ done | awk '!seen[$0]++' | tac > "$LOADORDERFILE"
 
 # change file times to enforce load order - the newer file is, the higher
 # is its priority
-idx=0
+idx=1
 while IFS= read -r line; do
-    touch -d "2000-01-01 00:00:00Z +$idx days" "$MERGERDIR/Data/$line"
+    touch -d "1999-12-31 00:00:00Z +$idx days" "$MERGERDIR/Data/$line"
     (( idx++ ))
 done < <(cat "$LOADORDERFILE")
 
