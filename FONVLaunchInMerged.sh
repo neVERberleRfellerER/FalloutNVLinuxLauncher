@@ -11,30 +11,6 @@ MODDATADIR="$MODDIR/data"
 OVFSWORKDIR="$MODDIR/_work"
 OVFSOVERLAYDIR="$MODDIR/_overlay"
 
-# Customize this to match preferred order of base game and eventually TTW.
-
-BASEORDER=$(cat <<'EOF'
-FalloutNV.esm
-DeadMoney.esm
-HonestHearts.esm
-OldWorldBlues.esm
-LonesomeRoad.esm
-GunRunnersArsenal.esm
-Fallout3.esm
-Anchorage.esm
-ThePitt.esm
-BrokenSteel.esm
-PointLookout.esm
-Zeta.esm
-CaravanPack.esm
-ClassicPack.esm
-MercenaryPack.esm
-TribalPack.esm
-TaleOfTwoWastelands.esm
-YUPTTW.esm
-EOF
-)
-
 # Everything below should not be touched
 
 if [ "$#" -eq 0 ]; then
@@ -49,15 +25,6 @@ LOWERDIRS=`find "$MODDATADIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z 
 
 echo "Overlay stacking will be (highest to lowest priority):"
 echo "$(echo $LOWERDIRS | tr ':' '\n')"
-
-# find mod ESPs and ESMs, remove duplicates keepeing last occurence
-MODORDER=$(find "$MODDATADIR" -mindepth 3 -maxdepth 3 -type f \( -name '*.esp' -or -name '*.esm' \) -print0 | sort -z | xargs -r0 -n1 basename | awk '!seen[$0]++' | tac)
-
-# remove files with predefined order
-MODORDER=$(grep -Fxvf <(echo "$BASEORDER") <(echo "$MODORDER"))
-# concatenate base and mod lists and reverse result to keep it in same logical
-# order that mod overlays are using
-MODORDER=$(echo -e "$BASEORDER\n$MODORDER" | tac)
 
 echo "Mounting $MERGERDIR"
 echo "If requested, enter password for sudo to mount overlaysfs"
@@ -76,17 +43,23 @@ mount -t overlay overlay -o lowerdir="$LOWERDIRS",upperdir="$OVFSOVERLAYDIR",wor
 sh -c "echo 'Waiting for $WAITFORPID before unmounting'; tail --pid=$WAITFORPID -f /dev/null; sleep 5; echo 'Unmounting $MERGERDIR'; exec umount -l '$MERGERDIR'" &
 EOF
 
+LOADORDERFILE="$MERGERDIR/Data/loadorder.txt"
+# build mod load order; first (as in OverlayFS order) encountered file is kept
+find "$MODDATADIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z | while IFS= read -r -d '' moddir; do
+    if [ -f "$moddir.order" ]; then
+        tac "$moddir.order"
+    else
+        find "$moddir" -mindepth 2 -maxdepth 2 -type f \( -name '*.esp' -or -name '*.esm' \) -print0 | sort -zr | xargs -r0 -n1 basename
+    fi
+done | awk '!seen[$0]++' | tac > "$LOADORDERFILE"
+
 # change file times to enforce load order - the newer file is, the higher
 # is its priority
-MODCOUNT=$(echo -n "$MODORDER" | grep -c '^')
-idx=1
-while read -r line; do
-    touch -d "$idx days ago" "$MERGERDIR/Data/$line"
+idx=0
+while IFS= read -r line; do
+    touch -d "Jan 1 2000 + $idx days" "$MERGERDIR/Data/$line"
     (( idx++ ))
-done < <(echo "$MODORDER")
-
-# save mod load order into text file to allow symlinking to it
-find "$MERGERDIR"/Data -mindepth 1 -maxdepth 1 -type f \( -name '*.esm' -o -name '*.esp' \) -printf '%Ts\t%p\n' | sort -n | cut -f2 | xargs -n1 -d '\n' basename > "$MERGERDIR"/Data/loadorder.txt
+done < <(cat "$LOADORDERFILE")
 
 echo "Mod load order is:"
 cat "$MERGERDIR"/Data/loadorder.txt
