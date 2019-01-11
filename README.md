@@ -2,8 +2,6 @@
 
 ## Variables
 
-BASEORDER - fixed order of ESM/ESPs at beginning of load order - these will be prepended and order determined by directory scan will be ignored for these. Useful for TTW which contains many files and they have to be interleaved with base game files.
-
 MODDATADIR - directory that contains mod structured as described in "Directory structure". Nothing will be changed in this directory. Base game is also treated as mod and should be last in order.
 
 MERGERDIR - directory where merged filesystem will be mounted
@@ -16,9 +14,9 @@ All changes (including creation and deletion of files) are handled by OverlayFS 
 
 ## Directory structure
 
-Scripts expects clean game directory (tested with Fallout NV) in FONVDIR, mods in MODDATADIR and writable directory in MODDIR where OverlayFS files will be stored.
+Script expects mods and base game in MODDATADIR and writable directory in OVFSWORKDIR and OVFSOVERLAYDIR where OverlayFS files will be stored.
 
-MODDATADIR should contain directories that after ascending ASCII alphabetical ordering matches mod load order where first directories have highest priority and latest lowest priority. Example:
+MODDATADIR should contain directories that after ascending ASCII alphabetical ordering matches mod load order where first directories have highest priority and latest lowest priority. manual ordering is possible by file named after directory they belong to with ".order" appended. To exclude directory from scan, create empty order file. Example:
 
 ```
 $MODDATADIR/0001 libvorbis
@@ -31,8 +29,11 @@ $MODDATADIR/9500 BLEED
 $MODDATADIR/9800 JIP CCC
 $MODDATADIR/9850 MCM
 $MODDATADIR/9997 TTW321
+$MODDATADIR/9997 TTW321.order
 $MODDATADIR/9998 TTW32
+$MODDATADIR/9998 TTW32.order
 $MODDATADIR/9999 Fallout New Vegas
+$MODDATADIR/9999 Fallout New Vegas.order
 ```
 
 Since these directories are just merged over each other, put your mods into Data subdirectory, e.g.:
@@ -44,9 +45,51 @@ and similar. It also makes possible to treat game as mod which simplifies script
 
 You can pick whatever ordering you want, but number prefixing is commonly used in world of UNIX-like systems for config ordering.
 
-The resulting mod load order is such that TTW have lovest priority and libvorbis (dll files) highest, effectively overwriting files with same names from TTW.
+The resulting mod load order is such that TTW have lovest priority and libvorbis (dll files) highest, effectively overwriting files with same names from TTW. Order files are inserteted instead of files present in matching directories.
 
-To have deterministic load order make sure that each directory contains only one ESP or ESM (unless order is specified explicitly in BASEORDER variable).
+To have deterministic load order make sure that each directory contains only one ESP/ESM or that order is specified in order file.
+
+### Example of order files for Fallout New vegas + Tale of Two Wastelands 3.2.1:
+
+9999 Fallout New Vegas.order:
+```
+FalloutNV.esm
+DeadMoney.esm
+HonestHearts.esm
+OldWorldBlues.esm
+LonesomeRoad.esm
+GunRunnersArsenal.esm
+Fallout3.esm
+CaravanPack.esm
+ClassicPack.esm
+MercenaryPack.esm
+TribalPack.esm
+```
+This one could be also empty or even nonexistent in this case because all files are overwriten by `9998 TTW32.order`. But having it allows simple removal of TTW if desired.
+
+9998 TTW32.order:
+```
+FalloutNV.esm
+DeadMoney.esm
+HonestHearts.esm
+OldWorldBlues.esm
+LonesomeRoad.esm
+GunRunnersArsenal.esm
+Fallout3.esm
+Anchorage.esm
+ThePitt.esm
+BrokenSteel.esm
+PointLookout.esm
+Zeta.esm
+CaravanPack.esm
+ClassicPack.esm
+MercenaryPack.esm
+TribalPack.esm
+TaleOfTwoWastelands.esm
+YUPTTW.esm
+```
+
+Since TTW 3.2.1 patch does not add new mod files but contains updated files, it is necessary to create empty order file for it (`9997 TTW321.order`) to preserve order specified in `9998 TTW32.order`, otherwise priority of files from `9997 TTW321` would be pushed to be higher than priority of files in `9998 TTW32`.
 
 ## Start
 
