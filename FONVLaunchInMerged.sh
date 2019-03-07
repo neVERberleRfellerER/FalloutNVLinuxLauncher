@@ -43,7 +43,9 @@ mount -t overlay overlay -o lowerdir='$LOWERDIRS',upperdir='$OVFSOVERLAYDIR',wor
 sh -c "echo 'Waiting for $WAITFORPID before unmounting'; tail --pid=$WAITFORPID -f /dev/null; sleep 5; echo 'Unmounting $MERGERDIR'; exec umount -l '$MERGERDIR'" &
 EOF
 
-LOADORDERFILE="$MERGERDIR/data/loadorder.txt"
+GAMEDATADIR="$(find "$MERGERDIR" -maxdepth 1 -mindepth 1 -iname data -print -quit)"
+
+LOADORDERFILE="$GAMEDATADIR/loadorder.txt"
 touch "$LOADORDERFILE"
 # build mod load order; first (as in OverlayFS order) encountered file is kept
 find "$MODDATADIR" -mindepth 1 -maxdepth 1 -type d -print0 | sort -z | while IFS= read -r -d '' moddir; do
@@ -58,12 +60,12 @@ done | awk '!seen[$0]++' | tac > "$LOADORDERFILE"
 # is its priority
 idx=1
 while IFS= read -r line; do
-    touch -d "1999-12-31 00:00:00Z +$idx days" "$MERGERDIR/data/$line"
+    touch -d "1999-12-31 00:00:00Z +$idx days" "$GAMEDATADIR/$line"
     (( idx++ ))
 done < <(cat "$LOADORDERFILE")
 
 echo "Mod load order is:"
-cat "$MERGERDIR"/data/loadorder.txt
+cat $GAMEDATADIR/loadorder.txt
 echo
 
 echo "Possible mixed-case file conflicts:"
