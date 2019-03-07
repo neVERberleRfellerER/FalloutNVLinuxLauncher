@@ -1,3 +1,10 @@
+# Simple instructions
+
+Simple instructions written by remyabel are available here:
+https://linuxguideandhints.com/fedora/winetips.html#id2
+
+More detailed and more technical but also more confusing guide is below.
+
 # Example usage
 
 ## Variables
