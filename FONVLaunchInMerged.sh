@@ -65,7 +65,7 @@ while IFS= read -r line; do
 done < <(cat "$LOADORDERFILE")
 
 echo "Mod load order is:"
-cat $GAMEDATADIR/loadorder.txt
+cat "$GAMEDATADIR/loadorder.txt"
 echo
 
 echo "Possible mixed-case file conflicts:"
